@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>LAAFSTYL Shuttle — Book a Ride</title>
+
+<!-- ── OPEN GRAPH ─────────────────────────── -->
+<meta property="og:type"         content="website">
+<meta property="og:url"          content="https://shuttle.laafstyl.org">
+<meta property="og:title"        content="LAAFSTYL Shuttle — Book a Ride on the West Coast 🚐">
+<meta property="og:description"  content="Affordable, reliable shuttle service on the West Coast. Get an instant fare quote and book in seconds — your driver confirms via WhatsApp.">
+<meta property="og:image"        content="https://shuttle.laafstyl.org/og-shuttle.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale"       content="en_ZA">
+<meta property="og:site_name"    content="LAAFSTYL Shuttle">
+<!-- Twitter Card -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="LAAFSTYL Shuttle — Book a Ride on the West Coast 🚐">
+<meta name="twitter:description" content="Affordable, reliable shuttle service on the West Coast. Instant quote, WhatsApp booking.">
+<meta name="twitter:image"       content="https://shuttle.laafstyl.org/og-shuttle.jpg">
+<!-- WhatsApp / general -->
+<meta name="description" content="Affordable, reliable shuttle service on the West Coast of South Africa. Instant fare calculator, WhatsApp booking. R14/km local · R11/km mid-range · R9/km long distance.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090e; --surface:#0d1118; --card:#111820; --card2:#172030;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.14);
+  --text:#edf2fa; --muted:#7a8aa8; --muted2:#3a4a5a;
+  --sa-green:#007A4D; --sa-gold:#FFB612; --sa-red:#DE3831; --sa-blue:#002395; --sa-black:#1a1a1a;
+  --green-glow:rgba(0,122,77,0.28); --gold-glow:rgba(255,182,18,0.25);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --r:10px; --r-lg:18px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* SA FLAG STRIPE */
+.sa-stripe{height:5px;background:linear-gradient(90deg,#1a1a1a 0% 12.5%,#FFB612 12.5% 25%,#007A4D 25% 37.5%,#fff 37.5% 50%,#DE3831 50% 62.5%,#002395 62.5% 100%);position:fixed;top:0;left:0;right:0;z-index:300}
+
+/* NAV */
+nav{position:fixed;top:5px;left:0;right:0;z-index:299;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:rgba(6,9,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo{width:28px;height:28px;border-radius:7px;object-fit:contain}
+.nav-name{font-size:14px;font-weight:800;color:var(--text)}.nav-name em{color:var(--sa-green);font-style:normal}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nl{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 11px;border-radius:7px;transition:all .15s;font-weight:500}
+.nl:hover{background:rgba(0,122,77,0.12);color:var(--sa-green)}.nl.on{color:var(--sa-green);font-weight:700}
+.nav-cta{background:var(--sa-green);color:#fff;font-weight:800;padding:6px 16px;border-radius:7px;font-size:12px;text-decoration:none;margin-left:6px;transition:all .2s}
+.nav-cta:hover{background:#009960;transform:translateY(-1px)}
+
+/* HAMBURGER */
+.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:10}
+.nav-ham span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
+.nav-ham.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-ham.open span:nth-child(2){opacity:0}
+.nav-ham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mob{display:none;position:fixed;top:61px;left:0;right:0;background:rgba(6,9,14,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 5%;z-index:298;flex-direction:column;gap:4px}
+.nav-mob.open{display:flex}
+.nav-mob .nl{padding:11px 14px;font-size:14px;border-radius:8px}
+.nav-mob .nav-cta{margin:8px 0 0;text-align:center;padding:12px;font-size:14px;border-radius:8px}
+
+/* HERO */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:80px 5% 60px;overflow:hidden}
+.hero-vid{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,#081a10,#06090e)}
+.hero-vid video{width:100%;height:100%;object-fit:cover}
+.hero-vid::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,14,.6) 0%,rgba(6,9,14,.42) 40%,rgba(6,9,14,.9) 100%)}
+.hero-vid::before{content:'';position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 25% 50%,rgba(0,122,77,.12) 0%,transparent 55%),radial-gradient(ellipse at 80% 25%,rgba(255,182,18,.07) 0%,transparent 55%)}
+.hero-inner{position:relative;z-index:1;max-width:680px}
+.hero-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--sa-green);margin-bottom:14px}
+.hero-title{font-family:var(--serif);font-size:clamp(40px,6.5vw,78px);font-style:italic;line-height:1.0;margin-bottom:18px}
+.hero-title .c-gold{color:var(--sa-gold)}
+.hero-sub{font-size:16px;color:rgba(237,242,250,.78);max-width:480px;margin-bottom:36px;line-height:1.7;font-weight:300}
+.hbtns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{padding:13px 30px;border-radius:var(--r);font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;background:var(--sa-green);color:#fff;box-shadow:0 6px 28px var(--green-glow);border:none}
+.btn-p:hover{transform:translateY(-2px);background:#009960;box-shadow:0 12px 36px var(--green-glow)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-s{padding:13px 26px;border-radius:var(--r);font-family:var(--sans);font-size:15px;font-weight:600;transition:all .2s;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text);backdrop-filter:blur(8px)}
+.btn-s:hover{border-color:var(--sa-green);color:var(--sa-green)}
+
+/* TRUST ROW */
+.trust{display:flex;gap:24px;flex-wrap:wrap;padding:0 5% 60px;opacity:.65;position:relative;z-index:1}
+.trust-i{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.trust-i span{color:var(--sa-green)}
+
+/* SA DIVIDER */
+.sa-div{height:4px;background:linear-gradient(90deg,var(--sa-black) 0% 12.5%,var(--sa-gold) 12.5% 25%,var(--sa-green) 25% 37.5%,#fff 37.5% 50%,var(--sa-red) 50% 62.5%,var(--sa-blue) 62.5% 100%);opacity:.55}
+
+/* SECTIONS */
+.sec{padding:68px 5%;max-width:1120px;margin:0 auto;position:relative;z-index:1}
+.lbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--sa-green);margin-bottom:10px}
+.stitle{font-family:var(--serif);font-size:clamp(26px,4vw,44px);font-style:italic;margin-bottom:8px}
+.ssub{font-size:14px;color:var(--muted);margin-bottom:36px;max-width:560px;line-height:1.7}
+
+/* SERVICE AREA NOTICE */
+.area-notice{background:rgba(0,122,77,.07);border:1px solid rgba(0,122,77,.2);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:32px;display:flex;align-items:flex-start;gap:14px}
+.area-notice-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.area-notice-text{font-size:13px;color:var(--muted);line-height:1.65}
+.area-notice-text strong{color:var(--text);display:block;margin-bottom:3px;font-size:14px}
+
+/* CALCULATOR */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.calc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px}
+.calc-result{background:linear-gradient(135deg,rgba(0,122,77,.07),rgba(255,182,18,.04));border-color:rgba(0,122,77,.2)}
+.fl{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.fr{margin-bottom:18px}
+.fi,.fs{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-family:var(--sans);font-size:14px;color:var(--text);outline:none;transition:border-color .2s;appearance:none}
+.fi:focus,.fs:focus{border-color:var(--sa-green)}
+.fs{background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%237a8aa8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.fi::placeholder{color:rgba(122,138,168,.45)}
+.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.price-box{text-align:center;padding:18px 0}
+.p-from{font-size:11px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.p-amt{font-family:var(--serif);font-size:60px;font-style:italic;color:var(--sa-green);line-height:1}
+.p-est{font-size:13px;color:var(--muted);margin-top:6px}
+.breakdown{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin:18px 0;display:none}
+.brow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}
+.brow.tot{font-weight:700;font-size:15px;border-top:1px solid var(--border);margin-top:6px;padding-top:10px;color:var(--sa-green)}
+.wa-note{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:10px;justify-content:center;text-align:center}
+.min-fare-note{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;padding:6px 10px;background:rgba(255,182,18,.05);border-radius:6px;border:1px solid rgba(255,182,18,.1)}
+
+/* PRICING TIERS */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.tier{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;text-align:center;transition:border-color .22s}
+.tier:hover{border-color:rgba(0,122,77,.35)}
+.tier-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.tier-km{font-family:var(--serif);font-size:19px;font-style:italic;margin-bottom:12px}
+.tier-rate{font-size:34px;font-weight:800;color:var(--sa-green);margin-bottom:4px}
+.tier-rate span{font-size:14px;font-weight:500;color:var(--muted)}
+.tier-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.pricing-footer{background:rgba(255,182,18,.06);border:1px solid rgba(255,182,18,.15);border-radius:var(--r);padding:14px 20px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:4px}
+.pricing-footer strong{color:var(--sa-gold)}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{text-align:center}
+.step-n{width:44px;height:44px;border-radius:50%;background:rgba(0,122,77,.12);border:1px solid rgba(0,122,77,.25);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--sa-green);margin:0 auto 14px}
+.step-t{font-size:14px;font-weight:700;margin-bottom:6px}.step-d{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* CONFIRMATION TIME NOTICE */
+.confirm-notice{background:rgba(0,122,77,.07);border:1px solid rgba(0,122,77,.18);border-radius:var(--r);padding:14px 18px;margin-top:28px;font-size:13px;color:var(--muted);line-height:1.65;text-align:center}
+.confirm-notice strong{color:var(--text)}
+
+/* BOOK FORM */
+.book-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:36px;max-width:700px;margin:0 auto}
+.book-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.full{grid-column:1/-1}
+.fta{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-family:var(--sans);font-size:14px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color .2s}
+.fta:focus{border-color:var(--sa-green)}
+.fi.err,.fta.err{border-color:var(--sa-red)}
+.book-status{display:none;padding:14px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;margin-top:12px}
+.bs-sending{background:rgba(0,122,77,.08);color:var(--sa-green);border:1px solid rgba(0,122,77,.2)}
+.bs-ok{background:rgba(0,122,77,.1);color:var(--sa-green);border:1px solid rgba(0,122,77,.25)}
+.bs-warn{background:rgba(255,182,18,.1);color:var(--sa-gold);border:1px solid rgba(255,182,18,.25)}
+.bs-err{background:rgba(222,56,49,.08);color:var(--sa-red);border:1px solid rgba(222,56,49,.2)}
+
+/* OPERATING HOURS WARNING */
+.hours-warn{display:none;background:rgba(255,182,18,.08);border:1px solid rgba(255,182,18,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--sa-gold);margin-top:6px;line-height:1.55}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);position:relative;z-index:1}
+.foot-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.foot-brand{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.foot-brand img{width:24px;height:24px;border-radius:6px;object-fit:contain}
+.foot-brand span{font-size:14px;font-weight:700}
+.foot-brand em{color:var(--sa-green);font-style:normal}
+.eco{display:flex;gap:8px;flex-wrap:wrap}
+.eco a{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:7px;border:1px solid var(--border);transition:all .15s}
+.eco a:hover{border-color:var(--sa-green);color:var(--sa-green);background:rgba(0,122,77,.08)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:14px 20px;font-size:13px;font-weight:600;transform:translateY(60px);opacity:0;transition:transform .3s,opacity .3s;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(0,122,77,.5);color:var(--sa-green)}.toast.bad{border-color:rgba(222,56,49,.4);color:var(--sa-red)}
+.toast.warn{border-color:rgba(255,182,18,.4);color:var(--sa-gold)}
+
+@media(max-width:860px){.calc-grid{grid-template-columns:1fr}.tiers{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.book-grid{grid-template-columns:1fr}.full{grid-column:1}}
+@media(max-width:600px){
+  .nav-links{display:none}
+  .nav-ham{display:flex}
+  .steps{grid-template-columns:1fr}
+  .foot-in{flex-direction:column;text-align:center}
+  .eco{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="sa-stripe"></div>
+
+<nav>
+  <a href="https://laafstyl.org" class="nav-brand">
+    <img src="/logo.png" alt="LAAFSTYL" class="nav-logo" onerror="this.style.display='none'">
+    <span class="nav-name">LAAF<em>STYL</em> Shuttle</span>
+  </a>
+  <div class="nav-links">
+    <a href="https://shuttle.laafstyl.org" class="nl on">🚐 Shuttle</a>
+    <a href="https://entertain.laafstyl.org" class="nl">🎙️ Media</a>
+    <a href="https://register.laafstyl.org" class="nl">🤖 LaafConnect</a>
+    <a href="#book" class="nav-cta">Book Now</a>
+  </div>
+  <button class="nav-ham" id="navHam" aria-label="Menu" onclick="toggleMobNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="nav-mob" id="navMob">
+  <a href="https://shuttle.laafstyl.org" class="nl on">🚐 Shuttle</a>
+  <a href="https://entertain.laafstyl.org" class="nl">🎙️ Media</a>
+  <a href="https://register.laafstyl.org" class="nl">🤖 LaafConnect</a>
+  <a href="#book" class="nav-cta" onclick="toggleMobNav()">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-vid">
+    <!-- poster= provides a still image fallback while video loads or if it fails on slow connections -->
+    <video autoplay muted loop playsinline poster="/shuttle-poster.jpg">
+      <source src="/shuttle-clip.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-kicker">🚐 LAAFSTYL Shuttle Service · West Coast, SA</div>
+    <h1 class="hero-title">Your ride,<br>your <span class="c-gold">way.</span></h1>
+    <p class="hero-sub">Affordable, reliable shuttle service on the West Coast. Get an instant quote and book in seconds — your driver confirms via WhatsApp within 30 minutes.</p>
+    <div class="hbtns">
+      <a href="#calculator" class="btn-p">Get Instant Quote</a>
+      <a href="#how" class="btn-s">How It Works</a>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="trust-i"><span>✓</span> WhatsApp confirmation within 30 min</div>
+  <div class="trust-i"><span>✓</span> Transparent pricing — no hidden fees</div>
+  <div class="trust-i"><span>✓</span> Available 7 days · 5am – 10pm</div>
+  <div class="trust-i"><span>✓</span> Payment on arrival</div>
+  <div class="trust-i"><span>✓</span> West Coast specialists</div>
+</div>
+
+<div class="sa-div"></div>
+
+<!-- CALCULATOR -->
+<section class="sec" id="calculator">
+  <div class="lbl">Instant Quote</div>
+  <h2 class="stitle">Calculate your fare</h2>
+  <p class="ssub">Enter your trip details for an instant estimate — no registration needed.</p>
+
+  <!-- SERVICE AREA NOTICE -->
+  <div class="area-notice">
+    <div class="area-notice-icon">📍</div>
+    <div class="area-notice-text">
+      <strong>Service area — West Coast & surrounds</strong>
+      We cover Saldanha, Vredenburg, Langebaan, Hopefield, Malmesbury, Cape Town (airport & city), and surrounding areas. Not sure if we cover your route? <a href="https://wa.me/27630096779?text=Hi%2C+do+you+cover+my+route%3F" target="_blank" style="color:var(--sa-green)">Ask us on WhatsApp</a>.
+    </div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="calc-card">
+      <div class="fr"><label class="fl">Pickup Location</label><input type="text" class="fi" id="c-pickup" placeholder="e.g. Saldanha Town Centre" oninput="calc()"></div>
+      <div class="fr"><label class="fl">Drop-off Location</label><input type="text" class="fi" id="c-drop" placeholder="e.g. Vredenburg Mall" oninput="calc()"></div>
+      <div class="fr">
+        <label class="fl">Approximate Distance (km)</label>
+        <input type="number" class="fi" id="c-km" placeholder="km" min="1" max="500" step="0.5" oninput="calc()">
+        <div class="hint">Not sure? <a href="https://maps.google.com" target="_blank" style="color:var(--sa-green)">Check Google Maps</a></div>
+      </div>
+      <div class="fr"><label class="fl">Passengers</label>
+        <select class="fs" id="c-pax" onchange="calc()">
+          <option value="1">1 Passenger</option><option value="2">2 Passengers</option>
+          <option value="3">3 Passengers</option><option value="4">4 Passengers</option><option value="5">5+ Passengers</option>
+        </select>
+      </div>
+      <div class="fr"><label class="fl">Trip Type</label>
+        <select class="fs" id="c-type" onchange="calc()">
+          <option value="oneway">One Way</option>
+          <option value="return">Return Trip (+30%)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-card calc-result">
+      <div class="price-box">
+        <div class="p-from">Estimated fare</div>
+        <div class="p-amt" id="p-amt">R—</div>
+        <div class="p-est" id="p-est">Enter distance to calculate</div>
+      </div>
+      <div class="min-fare-note">Minimum fare: <strong style="color:var(--sa-gold)">R80</strong> per trip</div>
+      <div class="breakdown" id="breakdown">
+        <div class="brow"><span>Distance</span><span id="b-km">—</span></div>
+        <div class="brow"><span>Rate per km</span><span id="b-rate">—</span></div>
+        <div class="brow"><span>Base fare</span><span id="b-base">—</span></div>
+        <div class="brow" id="b-min-row" style="display:none"><span>Minimum fare applied</span><span style="color:var(--sa-gold)">R80</span></div>
+        <div class="brow" id="b-ret-row" style="display:none"><span>Return trip</span><span id="b-ret">—</span></div>
+        <div class="brow tot"><span>Total</span><span id="b-tot">—</span></div>
+      </div>
+      <button class="btn-p" id="calc-book-btn" onclick="bookFromCalc()" disabled style="width:100%;justify-content:center;margin-top:12px">Book This Trip via WhatsApp</button>
+      <div class="wa-note">📱 Opens WhatsApp — driver confirms within 30 min</div>
+    </div>
+  </div>
+</section>
+
+<div class="sa-div"></div>
+
+<!-- PRICING -->
+<section class="sec" id="pricing">
+  <div class="lbl">Transparent Pricing</div>
+  <h2 class="stitle">Per-km rates</h2>
+  <p class="ssub">Longer trips = lower rates. Simple, fair pricing with no surprises.</p>
+  <div class="tiers">
+    <div class="tier">
+      <div class="tier-lbl">Short Haul</div>
+      <div class="tier-km">0 – 25 km</div>
+      <div class="tier-rate">R14<span>/km</span></div>
+      <div class="tier-desc">Local trips, quick errands, appointments</div>
+    </div>
+    <div class="tier">
+      <div class="tier-lbl">Mid-Range</div>
+      <div class="tier-km">26 – 75 km</div>
+      <div class="tier-rate">R11<span>/km</span></div>
+      <div class="tier-desc">Town-to-town, hospital visits, shopping trips</div>
+    </div>
+    <div class="tier">
+      <div class="tier-lbl">Long Distance</div>
+      <div class="tier-km">76 km+</div>
+      <div class="tier-rate">R9<span>/km</span></div>
+      <div class="tier-desc">Inter-city travel, airport transfers, overnight</div>
+    </div>
+  </div>
+  <div class="pricing-footer">
+    <strong>Minimum fare R80</strong> · Payment on arrival — cash or EFT · <strong>Operating hours: 5:00am – 10:00pm daily</strong> · Return trips charged at +30% of one-way fare. Quotes valid for same-day bookings.
+  </div>
+</section>
+
+<div class="sa-div"></div>
+
+<!-- HOW IT WORKS -->
+<section class="sec" id="how">
+  <div class="lbl">Process</div>
+  <h2 class="stitle">How it works</h2>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div class="step-t">Get a Quote</div><div class="step-d">Use the calculator above for an instant fare estimate</div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-t">Submit Booking</div><div class="step-d">Fill in your details and tap Book Now — we'll receive it instantly</div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-t">Confirmation</div><div class="step-d">We confirm via WhatsApp within 30 minutes and send your driver's details</div></div>
+    <div class="step"><div class="step-n">4</div><div class="step-t">Enjoy the Ride</div><div class="step-d">Driver arrives on time. Pay on arrival — cash or EFT.</div></div>
+  </div>
+  <div class="confirm-notice">
+    ⏱️ <strong>Confirmation time:</strong> We aim to confirm all bookings within <strong>30 minutes</strong> during operating hours (5am – 10pm). For urgent or same-day trips, <a href="https://wa.me/27630096779?text=Hi%2C+I+need+an+urgent+shuttle" target="_blank" style="color:var(--sa-green)">message us directly on WhatsApp</a>.
+  </div>
+</section>
+
+<div class="sa-div"></div>
+
+<!-- BOOK FORM -->
+<section class="sec" id="book">
+  <div class="lbl">Book a Ride</div>
+  <h2 class="stitle" style="margin-bottom:6px">Ready to go?</h2>
+  <p class="ssub">Fill in your details and we'll get back to you on WhatsApp within 30 minutes.</p>
+  <div class="book-card">
+    <div class="book-grid">
+      <div class="fr"><label class="fl">Your Name</label><input type="text" class="fi" id="b-name" placeholder="Full name"></div>
+      <div class="fr"><label class="fl">WhatsApp Number</label><input type="tel" class="fi" id="b-phone" placeholder="+27 xx xxx xxxx"></div>
+      <div class="fr"><label class="fl">Pickup Location</label><input type="text" class="fi" id="b-pickup" placeholder="Street address or area"></div>
+      <div class="fr"><label class="fl">Drop-off Location</label><input type="text" class="fi" id="b-drop" placeholder="Street address or area"></div>
+      <div class="fr">
+        <label class="fl">Date &amp; Time</label>
+        <input type="datetime-local" class="fi" id="b-dt" onchange="checkHours()">
+        <div class="hours-warn" id="hours-warn">⚠️ This time is outside our operating hours (5am – 10pm). Please choose a time within those hours, or <a href="https://wa.me/27630096779" target="_blank" style="color:var(--sa-gold)">contact us directly</a> to arrange.</div>
+      </div>
+      <div class="fr"><label class="fl">Passengers</label>
+        <select class="fs" id="b-pax">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+        </select>
+      </div>
+      <div class="fr full"><label class="fl">Special Requests (optional)</label><textarea class="fta" id="b-notes" placeholder="e.g. baby seat, lots of luggage, wheelchair accessible, airport terminal…"></textarea></div>
+    </div>
+    <div style="margin-top:22px">
+      <button class="btn-p" id="book-btn" onclick="submitBooking()" style="width:100%;justify-content:center;font-size:16px;padding:16px">📱 Book Now via WhatsApp</button>
+      <div class="wa-note" style="margin-top:10px">Your booking goes directly to our coordinator — confirmation within 30 min</div>
+      <div class="book-status" id="bstat"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <div>
+      <div class="foot-brand">
+        <img src="/logo.png" alt="LAAFSTYL" onerror="this.style.display='none'">
+        <span><em>LAAF</em>STYL Shuttle</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">© 2026 LAAFSTYL. All rights reserved. · Proudly South African 🇿🇦</div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:right">LAAFSTYL Ecosystem</div>
+      <div class="eco">
+        <a href="https://laafstyl.org">🏠 Home</a>
+        <a href="https://register.laafstyl.org">🤖 AI Services</a>
+        <a href="https://entertain.laafstyl.org">🎙️ Media</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONTACTS ─────────────────────────────────
+// Single coordinator number — internal routing handled on your end
+const COORDINATOR = '27630096779';
+const N8N         = '/api/leads';
+const MIN_FARE    = 80;
+
+// ── MOBILE NAV ───────────────────────────────
+function toggleMobNav() {
+  document.getElementById('navHam').classList.toggle('open');
+  document.getElementById('navMob').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('nav') && !e.target.closest('.nav-mob')) {
+    document.getElementById('navHam').classList.remove('open');
+    document.getElementById('navMob').classList.remove('open');
+  }
+});
+
+// ── FARE CALCULATOR ──────────────────────────
+let _km=0, _total=0, _pickup='', _drop='';
+
+function rate(km){ return km<=25?14:km<=75?11:9 }
+
+function calc(){
+  const km     = parseFloat(document.getElementById('c-km').value)||0;
+  const isRet  = document.getElementById('c-type').value==='return';
+  const pax    = document.getElementById('c-pax').value;
+  _pickup      = document.getElementById('c-pickup').value.trim();
+  _drop        = document.getElementById('c-drop').value.trim();
+  _km          = km;
+
+  const amtEl  = document.getElementById('p-amt');
+  const estEl  = document.getElementById('p-est');
+  const bdEl   = document.getElementById('breakdown');
+  const btn    = document.getElementById('calc-book-btn');
+
+  if(!km||km<=0){amtEl.textContent='R—';estEl.textContent='Enter distance to calculate';bdEl.style.display='none';btn.disabled=true;_total=0;return}
+
+  const r = rate(km);
+  let base = Math.round(km * r);
+  const minApplied = base < MIN_FARE;
+  if (minApplied) base = MIN_FARE;
+  const retAdd = isRet ? Math.round(base * .3) : 0;
+  const total  = base + retAdd;
+  _total = total;
+
+  amtEl.textContent = 'R' + total;
+  estEl.textContent = `${km}km · R${r}/km${pax>1?' · '+pax+' passengers':''}`;
+  document.getElementById('b-km').textContent   = km + ' km';
+  document.getElementById('b-rate').textContent = 'R' + r + '/km';
+  document.getElementById('b-base').textContent = 'R' + Math.round(km * r);
+  document.getElementById('b-ret').textContent  = 'R' + retAdd;
+  document.getElementById('b-tot').textContent  = 'R' + total;
+  document.getElementById('b-ret-row').style.display = isRet ? '' : 'none';
+  document.getElementById('b-min-row').style.display = minApplied ? '' : 'none';
+  bdEl.style.display = '';
+  btn.disabled = !(_pickup && _drop && km > 0);
+}
+
+function bookFromCalc(){
+  const pax  = document.getElementById('c-pax').value;
+  const type = document.getElementById('c-type').value;
+  if(!_km||!_pickup||!_drop) return;
+
+  const msg =
+`🚐 *LAAFSTYL Shuttle Booking*
+
+📍 From: ${_pickup}
+📍 To: ${_drop}
+📏 Distance: ${_km}km
+👥 Passengers: ${pax}
+🔄 Trip: ${type==='return'?'Return':'One way'}
+💰 Estimated fare: R${_total}
+
+Please confirm this booking.`;
+
+  window.open(`https://wa.me/${COORDINATOR}?text=${encodeURIComponent(msg)}`, '_blank');
+  sendToN8n({ type:'shuttle_calc_booking', pickup:_pickup, dropoff:_drop, km:_km, fare:_total, pax, tripType:type });
+}
+
+// ── OPERATING HOURS CHECK ────────────────────
+function checkHours() {
+  const val = document.getElementById('b-dt').value;
+  const warn = document.getElementById('hours-warn');
+  if (!val) { warn.style.display = 'none'; return; }
+  const dt = new Date(val);
+  const hour = dt.getHours();
+  const isOutside = hour < 5 || hour >= 22;
+  warn.style.display = isOutside ? 'block' : 'none';
+}
+
+// ── BOOK FORM ────────────────────────────────
+function submitBooking(){
+  const name   = document.getElementById('b-name').value.trim();
+  const phone  = document.getElementById('b-phone').value.trim();
+  const pickup = document.getElementById('b-pickup').value.trim();
+  const drop   = document.getElementById('b-drop').value.trim();
+  const dt     = document.getElementById('b-dt').value;
+  const pax    = document.getElementById('b-pax').value;
+  const notes  = document.getElementById('b-notes').value.trim();
+  const btn    = document.getElementById('book-btn');
+
+  // Validate required fields
+  let hasErr = false;
+  ['b-name','b-phone','b-pickup','b-drop'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.classList.add('err'); hasErr = true; }
+    else el.classList.remove('err');
+  });
+
+  if(hasErr){
+    showBstat('⚠️ Please fill in your name, WhatsApp number, pickup and drop-off location.','bs-warn');
+    toast('Please complete all required fields','bad'); return;
+  }
+
+  // Warn about outside hours but don't block
+  if (dt) {
+    const hour = new Date(dt).getHours();
+    if (hour < 5 || hour >= 22) {
+      toast('Note: requested time is outside operating hours (5am–10pm)', 'warn');
+    }
+  }
+
+  btn.disabled = true; btn.textContent = 'Opening WhatsApp…';
+
+  const msg =
+`🚐 *LAAFSTYL Shuttle Booking*
+
+👤 Name: ${name}
+📱 WhatsApp: ${phone}
+📍 From: ${pickup}
+📍 To: ${drop}
+🗓️ Date/Time: ${dt ? new Date(dt).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'}) : 'ASAP'}
+👥 Passengers: ${pax}${notes?'\n📝 Notes: '+notes:''}
+
+Please confirm and send driver details. 🙏`;
+
+  window.open(`https://wa.me/${COORDINATOR}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  sendToN8n({
+    type:'shuttle_booking', name, phone, pickup, dropoff:drop,
+    datetime: dt || 'ASAP', pax, notes, source:'shuttle.laafstyl.org',
+    timestamp: new Date().toISOString()
+  });
+
+  showBstat('✓ WhatsApp opened! You\'ll receive confirmation within 30 minutes during operating hours.','bs-ok');
+  toast('Booking sent! 🚐 We\'ll confirm shortly.','ok');
+  btn.disabled = false; btn.textContent = '📱 Book Now via WhatsApp';
+
+  // Clear form
+  ['b-name','b-phone','b-pickup','b-drop','b-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── N8N LEAD CAPTURE ─────────────────────────
+async function sendToN8n(data){
+  try{
+    await fetch(N8N,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ source:'shuttle', ...data })
+    });
+  }catch(e){ console.warn('n8n lead failed:',e.message) }
+}
+
+// ── PREFILL BOOKING FORM FROM CALC ────────────
+document.querySelectorAll('a[href="#book"]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    setTimeout(()=>{
+      if(_pickup) document.getElementById('b-pickup').value=_pickup;
+      if(_drop)   document.getElementById('b-drop').value=_drop;
+    },350);
+  });
+});
+
+// ── DEFAULT DATETIME (next round hour, +1h) ───
+(function(){
+  const now = new Date(); now.setHours(now.getHours()+1,0,0,0);
+  const pad = n => String(n).padStart(2,'0');
+  const v = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:00`;
+  document.getElementById('b-dt').value = v;
+  document.getElementById('b-dt').min   = new Date().toISOString().slice(0,16);
+  checkHours();
+})();
+
+// ── HELPERS ───────────────────────────────────
+function showBstat(msg,cls){
+  const el=document.getElementById('bstat');
+  el.textContent=msg; el.className='book-status '+cls; el.style.display='block';
+}
+let _t;
+function toast(msg,type){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show '+(type||'');
+  clearTimeout(_t); _t=setTimeout(()=>el.classList.remove('show'),4000);
+}
+</script>
+</body>
+</html>
