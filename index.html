@@ -268,12 +268,12 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
 
   <div class="calc-grid">
     <div class="calc-card">
-      <div class="fr"><label class="fl">Pickup Location</label><input type="text" class="fi" id="c-pickup" placeholder="e.g. Saldanha Town Centre" oninput="calc()"></div>
-      <div class="fr"><label class="fl">Drop-off Location</label><input type="text" class="fi" id="c-drop" placeholder="e.g. Vredenburg Mall" oninput="calc()"></div>
+      <div class="fr"><label class="fl">Pickup Location</label><input type="text" class="fi" id="c-pickup" placeholder="e.g. Saldanha Town Centre" oninput="onRouteInput()"></div>
+      <div class="fr"><label class="fl">Drop-off Location</label><input type="text" class="fi" id="c-drop" placeholder="e.g. Vredenburg Mall" oninput="onRouteInput()"></div>
       <div class="fr">
-        <label class="fl">Approximate Distance (km)</label>
-        <input type="number" class="fi" id="c-km" placeholder="km" min="1" max="500" step="0.5" oninput="calc()">
-        <div class="hint">Not sure? <a href="https://maps.google.com" target="_blank" style="color:var(--sa-green)">Check Google Maps</a></div>
+        <label class="fl">Distance (km) <span id="c-km-auto" style="display:none;color:var(--sa-green);font-weight:600;text-transform:none;letter-spacing:0">· auto-calculated</span></label>
+        <input type="number" class="fi" id="c-km" placeholder="Enter pickup + drop-off above, or type km directly" min="1" max="500" step="0.5" oninput="onKmManualEdit()">
+        <div class="hint" id="c-km-hint">Type both locations above for an automatic estimate, or enter km directly.</div>
       </div>
       <div class="fr"><label class="fl">Passengers</label>
         <select class="fs" id="c-pax" onchange="calc()">
@@ -418,7 +418,6 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
 // ── CONTACTS ─────────────────────────────────
 // Single coordinator number — internal routing handled on your end
 const COORDINATOR = '27630096779';
-const N8N         = '/api/leads';
 const MIN_FARE    = 80;
 
 // ── MOBILE NAV ───────────────────────────────
@@ -435,8 +434,80 @@ document.addEventListener('click', e => {
 
 // ── FARE CALCULATOR ──────────────────────────
 let _km=0, _total=0, _pickup='', _drop='';
+let _kmAuto=false, _routeTimer=null, _routeSeq=0;
 
 function rate(km){ return km<=25?14:km<=75?11:9 }
+
+// ── AUTO-DISTANCE (free geocoding + routing, no API key) ─
+// Nominatim (OpenStreetMap) geocodes pickup/drop-off text, biased to the
+// Western Cape / South African West Coast. OSRM's public routing server
+// then returns real driving distance between the two points. Falls back
+// silently to manual km entry if either lookup fails or is ambiguous.
+async function geocodeZA(query){
+  if(!query || query.trim().length<3) return null;
+  const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=za'
+    + '&viewbox=17.5,-32.5,19.0,-33.5&bounded=0'
+    + '&q=' + encodeURIComponent(query + ', Western Cape, South Africa');
+  const res = await fetch(url, { headers: { 'Accept':'application/json' } });
+  if(!res.ok) return null;
+  const data = await res.json();
+  if(!data || !data.length) return null;
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
+
+async function routeKm(a, b){
+  const url = `https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=false`;
+  const res = await fetch(url);
+  if(!res.ok) return null;
+  const data = await res.json();
+  if(data.code!=='Ok' || !data.routes || !data.routes.length) return null;
+  return data.routes[0].distance / 1000; // metres -> km
+}
+
+function onKmManualEdit(){
+  _kmAuto = false;
+  document.getElementById('c-km-auto').style.display = 'none';
+  document.getElementById('c-km-hint').textContent = 'Type both locations above for an automatic estimate, or enter km directly.';
+  calc();
+}
+
+function onRouteInput(){
+  calc(); // keep whatever km value is present (manual or stale auto) responsive immediately
+  clearTimeout(_routeTimer);
+  const pickup = document.getElementById('c-pickup').value.trim();
+  const drop   = document.getElementById('c-drop').value.trim();
+  if(pickup.length<3 || drop.length<3) return;
+  _routeTimer = setTimeout(()=>autoCalcDistance(pickup, drop), 700); // debounce while typing
+}
+
+async function autoCalcDistance(pickup, drop){
+  const seq = ++_routeSeq; // guard against out-of-order responses
+  const hint = document.getElementById('c-km-hint');
+  hint.textContent = 'Looking up route…';
+  try{
+    const [a, b] = await Promise.all([geocodeZA(pickup), geocodeZA(drop)]);
+    if(seq!==_routeSeq) return; // a newer request superseded this one
+    if(!a || !b){
+      hint.textContent = "Couldn't find one of those locations — enter km manually.";
+      return;
+    }
+    const km = await routeKm(a, b);
+    if(seq!==_routeSeq) return;
+    if(!km){
+      hint.textContent = "Couldn't calculate that route — enter km manually.";
+      return;
+    }
+    const kmEl = document.getElementById('c-km');
+    kmEl.value = Math.round(km*10)/10;
+    _kmAuto = true;
+    document.getElementById('c-km-auto').style.display = '';
+    hint.textContent = 'Auto-calculated from your locations — you can still adjust it manually.';
+    calc();
+  }catch(e){
+    if(seq===_routeSeq) hint.textContent = "Couldn't calculate that route — enter km manually.";
+    console.warn('route lookup failed:', e.message);
+  }
+}
 
 function calc(){
   const km     = parseFloat(document.getElementById('c-km').value)||0;
@@ -492,7 +563,6 @@ function bookFromCalc(){
 Please confirm this booking.`;
 
   window.open(`https://wa.me/${COORDINATOR}?text=${encodeURIComponent(msg)}`, '_blank');
-  sendToN8n({ type:'shuttle_calc_booking', pickup:_pickup, dropoff:_drop, km:_km, fare:_total, pax, tripType:type });
 }
 
 // ── OPERATING HOURS CHECK ────────────────────
@@ -554,29 +624,12 @@ Please confirm and send driver details. 🙏`;
 
   window.open(`https://wa.me/${COORDINATOR}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  sendToN8n({
-    type:'shuttle_booking', name, phone, pickup, dropoff:drop,
-    datetime: dt || 'ASAP', pax, notes, source:'shuttle.laafstyl.org',
-    timestamp: new Date().toISOString()
-  });
-
   showBstat('✓ WhatsApp opened! You\'ll receive confirmation within 30 minutes during operating hours.','bs-ok');
   toast('Booking sent! 🚐 We\'ll confirm shortly.','ok');
   btn.disabled = false; btn.textContent = '📱 Book Now via WhatsApp';
 
   // Clear form
   ['b-name','b-phone','b-pickup','b-drop','b-notes'].forEach(id => document.getElementById(id).value = '');
-}
-
-// ── N8N LEAD CAPTURE ─────────────────────────
-async function sendToN8n(data){
-  try{
-    await fetch(N8N,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ source:'shuttle', ...data })
-    });
-  }catch(e){ console.warn('n8n lead failed:',e.message) }
 }
 
 // ── PREFILL BOOKING FORM FROM CALC ────────────
