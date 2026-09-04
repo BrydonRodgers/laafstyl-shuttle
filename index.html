@@ -295,12 +295,13 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
         <div class="p-amt" id="p-amt">R—</div>
         <div class="p-est" id="p-est">Enter distance to calculate</div>
       </div>
-      <div class="min-fare-note">Minimum fare: <strong style="color:var(--sa-gold)">R80</strong> per trip</div>
+      <div class="min-fare-note">Minimum fare: <strong style="color:var(--sa-gold)">R80</strong> per trip · Extra passengers: <strong style="color:var(--sa-gold)">+R250</strong> each</div>
       <div class="breakdown" id="breakdown">
         <div class="brow"><span>Distance</span><span id="b-km">—</span></div>
         <div class="brow"><span>Rate per km</span><span id="b-rate">—</span></div>
         <div class="brow"><span>Base fare</span><span id="b-base">—</span></div>
         <div class="brow" id="b-min-row" style="display:none"><span>Minimum fare applied</span><span style="color:var(--sa-gold)">R80</span></div>
+        <div class="brow" id="b-pax-row" style="display:none"><span>Extra passengers</span><span id="b-pax">—</span></div>
         <div class="brow" id="b-ret-row" style="display:none"><span>Return trip</span><span id="b-ret">—</span></div>
         <div class="brow tot"><span>Total</span><span id="b-tot">—</span></div>
       </div>
@@ -338,7 +339,7 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
     </div>
   </div>
   <div class="pricing-footer">
-    <strong>Minimum fare R80</strong> · Payment on arrival — cash or EFT · <strong>Operating hours: 5:00am – 10:00pm daily</strong> · Return trips charged at +30% of one-way fare. Quotes valid for same-day bookings.
+    <strong>Minimum fare R80</strong> · <strong>Extra passengers +R250 each</strong> (first passenger included in fare) · Payment on arrival — cash or EFT · <strong>Operating hours: 5:00am – 10:00pm daily</strong> · Return trips charged at +30% of one-way fare. Quotes valid for same-day bookings.
   </div>
 </section>
 
@@ -418,8 +419,9 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
 <script>
 // ── CONTACTS ─────────────────────────────────
 // Single coordinator number — internal routing handled on your end
-const COORDINATOR = '27635016440';
-const MIN_FARE    = 80;
+const COORDINATOR   = '27635016440';
+const MIN_FARE      = 80;
+const EXTRA_PAX_FEE = 250; // per passenger beyond the first
 
 // ── MOBILE NAV ───────────────────────────────
 function toggleMobNav() {
@@ -513,7 +515,7 @@ async function autoCalcDistance(pickup, drop){
 function calc(){
   const km     = parseFloat(document.getElementById('c-km').value)||0;
   const isRet  = document.getElementById('c-type').value==='return';
-  const pax    = document.getElementById('c-pax').value;
+  const pax    = parseInt(document.getElementById('c-pax').value,10)||1;
   _pickup      = document.getElementById('c-pickup').value.trim();
   _drop        = document.getElementById('c-drop').value.trim();
   _km          = km;
@@ -529,8 +531,9 @@ function calc(){
   let base = Math.round(km * r);
   const minApplied = base < MIN_FARE;
   if (minApplied) base = MIN_FARE;
-  const retAdd = isRet ? Math.round(base * .3) : 0;
-  const total  = base + retAdd;
+  const retAdd  = isRet ? Math.round(base * .3) : 0;
+  const paxAdd  = (pax - 1) * EXTRA_PAX_FEE;
+  const total   = base + retAdd + paxAdd;
   _total = total;
 
   amtEl.textContent = 'R' + total;
@@ -539,9 +542,11 @@ function calc(){
   document.getElementById('b-rate').textContent = 'R' + r + '/km';
   document.getElementById('b-base').textContent = 'R' + Math.round(km * r);
   document.getElementById('b-ret').textContent  = 'R' + retAdd;
+  document.getElementById('b-pax').textContent  = 'R' + paxAdd;
   document.getElementById('b-tot').textContent  = 'R' + total;
   document.getElementById('b-ret-row').style.display = isRet ? '' : 'none';
   document.getElementById('b-min-row').style.display = minApplied ? '' : 'none';
+  document.getElementById('b-pax-row').style.display = paxAdd>0 ? '' : 'none';
   bdEl.style.display = '';
   btn.disabled = !(_pickup && _drop && km > 0);
 }
