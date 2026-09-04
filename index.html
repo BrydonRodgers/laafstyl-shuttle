@@ -280,7 +280,7 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
           <option value="1">1 Passenger</option><option value="2">2 Passengers</option>
           <option value="3">3 Passengers</option><option value="4">4 Passengers</option><option value="5">5+ Passengers</option>
         </select>
-        <div class="hint" id="c-pax-hint" style="display:none;color:var(--sa-gold)">Short trips (0–25km) are limited to 4 passengers — for 5+, please contact us directly.</div>
+        <div class="hint" id="c-pax-hint" style="display:none;color:var(--sa-gold)">Trips up to 50km are limited to 4 passengers — for 5+, please contact us directly.</div>
       </div>
       <div class="fr"><label class="fl">Trip Type</label>
         <select class="fs" id="c-type" onchange="calc()">
@@ -296,7 +296,7 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
         <div class="p-amt" id="p-amt">R—</div>
         <div class="p-est" id="p-est">Enter distance to calculate</div>
       </div>
-      <div class="min-fare-note">Minimum fare: <strong style="color:var(--sa-gold)">R80</strong> per trip · Extra passengers: <strong style="color:var(--sa-gold)">+R25</strong> each on short trips (0–25km, max 4), <strong style="color:var(--sa-gold)">+R250</strong> each beyond that</div>
+      <div class="min-fare-note">Minimum fare: <strong style="color:var(--sa-gold)">R80</strong> per trip · Extra passengers: <strong style="color:var(--sa-gold)">+R25</strong> (0–50km, max 4 pax) · <strong style="color:var(--sa-gold)">+R50</strong> (51–100km) · <strong style="color:var(--sa-gold)">+R100</strong> (101–150km), doubling every further 50km</div>
       <div class="breakdown" id="breakdown">
         <div class="brow"><span>Distance</span><span id="b-km">—</span></div>
         <div class="brow"><span>Rate per km</span><span id="b-rate">—</span></div>
@@ -340,7 +340,7 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
     </div>
   </div>
   <div class="pricing-footer">
-    <strong>Minimum fare R80</strong> · <strong>Extra passengers:</strong> +R25 each on short trips (0–25km, max 4 passengers), +R250 each on mid/long-range trips (first passenger included in fare) · Payment on arrival — cash or EFT · <strong>Operating hours: 5:00am – 10:00pm daily</strong> · Return trips charged at +30% of one-way fare. Quotes valid for same-day bookings.
+    <strong>Minimum fare R80</strong> · <strong>Extra passengers</strong> (first passenger included): +R25 for trips 0–50km (max 4 passengers), +R50 for 51–100km, +R100 for 101–150km, doubling every further 50km · Payment on arrival — cash or EFT · <strong>Operating hours: 5:00am – 10:00pm daily</strong> · Return trips charged at +30% of one-way fare. Quotes valid for same-day bookings.
   </div>
 </section>
 
@@ -420,10 +420,17 @@ footer{border-top:1px solid var(--border);padding:36px 5%;background:var(--bg);p
 <script>
 // ── CONTACTS ─────────────────────────────────
 // Single coordinator number — internal routing handled on your end
-const COORDINATOR        = '27635016440';
-const MIN_FARE           = 80;
-const EXTRA_PAX_FEE      = 250; // per passenger beyond the first — mid/long-range trips (>25km)
-const SHORT_HAUL_PAX_FEE = 25;  // per passenger beyond the first — short trips (0-25km), max 4 passengers
+const COORDINATOR   = '27635016440';
+const MIN_FARE      = 80;
+const PAX_CAP_KM     = 50; // trips at/under this distance are capped at 4 passengers
+const PAX_CAP_MAX    = 4;
+
+// Extra-passenger fee (per passenger beyond the first), banded by distance:
+// 0-50km R25 · 51-100km R50 · 101-150km R100 · 151-200km R200 · doubling every further 50km band.
+function extraPaxFee(km){
+  const band = Math.max(0, Math.ceil(km/50) - 1);
+  return 25 * Math.pow(2, band);
+}
 
 // ── MOBILE NAV ───────────────────────────────
 function toggleMobNav() {
@@ -531,23 +538,22 @@ function calc(){
 
   if(!km||km<=0){amtEl.textContent='R—';estEl.textContent='Enter distance to calculate';bdEl.style.display='none';btn.disabled=true;_total=0;paxHintEl.style.display='none';return}
 
-  const isShortHaul = km<=25;
-  const overPaxLimit = isShortHaul && pax>4;
+  const overPaxLimit = km<=PAX_CAP_KM && pax>PAX_CAP_MAX;
   paxHintEl.style.display = overPaxLimit ? '' : 'none';
 
   const r = rate(km);
   let base = Math.round(km * r);
   const minApplied = base < MIN_FARE;
   if (minApplied) base = MIN_FARE;
-  const retAdd     = isRet ? Math.round(base * .3) : 0;
-  const paxFee      = isShortHaul ? SHORT_HAUL_PAX_FEE : EXTRA_PAX_FEE;
-  const paxAdd      = (pax - 1) * paxFee;
+  const retAdd  = isRet ? Math.round(base * .3) : 0;
+  const paxFee  = extraPaxFee(km);
+  const paxAdd  = (pax - 1) * paxFee;
   const total   = Math.floor((base + retAdd + paxAdd) / 10) * 10; // round down to nearest R10
   _total = total;
 
   if(overPaxLimit){
     amtEl.textContent = 'R—';
-    estEl.textContent = 'Short trips limited to 4 passengers';
+    estEl.textContent = `Trips up to ${PAX_CAP_KM}km are limited to ${PAX_CAP_MAX} passengers`;
     bdEl.style.display = 'none';
     btn.disabled = true;
     return;
