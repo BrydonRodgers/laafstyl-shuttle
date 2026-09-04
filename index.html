@@ -533,7 +533,7 @@ function calc(){
   if (minApplied) base = MIN_FARE;
   const retAdd  = isRet ? Math.round(base * .3) : 0;
   const paxAdd  = (pax - 1) * EXTRA_PAX_FEE;
-  const total   = base + retAdd + paxAdd;
+  const total   = Math.floor((base + retAdd + paxAdd) / 10) * 10; // round down to nearest R10
   _total = total;
 
   amtEl.textContent = 'R' + total;
