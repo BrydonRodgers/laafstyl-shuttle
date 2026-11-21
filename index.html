@@ -160,9 +160,20 @@
  ]
 }
 </script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Which areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "We run shuttle rides around Langebaan, Saldanha, Vredenburg, Hopefield, Malmesbury and Cape Town (airport and city). Not sure about your route? Message us on WhatsApp and we will confirm."}}, {"@type": "Question", "name": "How fast will my booking be confirmed?", "acceptedAnswer": {"@type": "Answer", "text": "We aim to confirm every booking on WhatsApp within 30 minutes during operating hours (5am to 10pm, 7 days a week), and send your driver's details."}}, {"@type": "Question", "name": "How do I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Payment is on arrival, in cash or by EFT. There is nothing to pay online and no hidden fees."}}, {"@type": "Question", "name": "How is the fare worked out?", "acceptedAnswer": {"@type": "Answer", "text": "Fares are per kilometre (R14/km up to 25 km, R11/km for 26 to 75 km, R9/km from 76 km), with a minimum fare of R80. Return trips add 30%, and extra passengers add a small fixed amount. The calculator above shows your exact estimate."}}, {"@type": "Question", "name": "Can I book for the same day?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. For urgent or same-day trips, message us directly on WhatsApp so we can confirm as quickly as possible."}}, {"@type": "Question", "name": "What if I need to change or cancel my booking?", "acceptedAnswer": {"@type": "Answer", "text": "Message us on the same WhatsApp chat as soon as your plans change, and we will sort it out with you."}}]}</script>
 
 <link rel="preload" as="image" href="/assets/shuttle-poster.jpg" fetchpriority="high">
-<noscript><style>#routePath{stroke-dasharray:none!important;stroke-dashoffset:0!important}.town,#van{opacity:1!important}</style></noscript>
+<noscript><style>#routePath{stroke-dasharray:none!important;stroke-dashoffset:0!important}.town,#van{opacity:1!important}
+.faq{display:grid;gap:10px;max-width:780px;margin:0 auto}
+.faq-i{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:0}
+.faq-i summary{cursor:pointer;padding:16px 18px;font-weight:600;list-style:none;min-height:44px}
+.faq-i summary::-webkit-details-marker{display:none}
+.faq-i summary::after{content:"+";float:right;color:var(--sa-gold);font-size:20px;line-height:1}
+.faq-i[open] summary::after{content:"\2212"}
+.faq-i p{padding:0 18px 16px;color:var(--muted);line-height:1.6;margin:0}
+.wa-sticky{display:none}
+@media(max-width:700px){.wa-sticky{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;align-items:center;justify-content:center;gap:8px;min-height:48px;background:#25D366;color:#06130b;font-weight:700;border-radius:999px;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.45)}body{padding-bottom:72px}}
+</style></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -597,6 +608,10 @@ section[id]{scroll-margin-top:72px}
     </div>
   </div>
 </section>
+<section class="sec" id="faq">
+  <h2 class="stitle">Frequently asked questions</h2>
+  <div class="faq"><details class="faq-i"><summary>Which areas do you cover?</summary><p>We run shuttle rides around Langebaan, Saldanha, Vredenburg, Hopefield, Malmesbury and Cape Town (airport and city). Not sure about your route? Message us on WhatsApp and we will confirm.</p></details><details class="faq-i"><summary>How fast will my booking be confirmed?</summary><p>We aim to confirm every booking on WhatsApp within 30 minutes during operating hours (5am to 10pm, 7 days a week), and send your driver&#x27;s details.</p></details><details class="faq-i"><summary>How do I pay?</summary><p>Payment is on arrival, in cash or by EFT. There is nothing to pay online and no hidden fees.</p></details><details class="faq-i"><summary>How is the fare worked out?</summary><p>Fares are per kilometre (R14/km up to 25 km, R11/km for 26 to 75 km, R9/km from 76 km), with a minimum fare of R80. Return trips add 30%, and extra passengers add a small fixed amount. The calculator above shows your exact estimate.</p></details><details class="faq-i"><summary>Can I book for the same day?</summary><p>Yes. For urgent or same-day trips, message us directly on WhatsApp so we can confirm as quickly as possible.</p></details><details class="faq-i"><summary>What if I need to change or cancel my booking?</summary><p>Message us on the same WhatsApp chat as soon as your plans change, and we will sort it out with you.</p></details></div>
+</section>
 
 </main>
 
@@ -902,5 +917,6 @@ function toast(msg,type){
 }
 </script>
 <script src="/assets/hero.js" defer></script>
+<a class="wa-sticky" href="https://wa.me/27635016440?text=Hi%2C+I+would+like+to+book+a+shuttle" rel="noopener" data-cta="sticky-wa">Book on WhatsApp</a>
 </body>
 </html>
